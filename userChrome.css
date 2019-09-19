@@ -10,8 +10,8 @@
 }
 
 :root:not([customizing]) #navigator-toolbox:focus-within #nav-bar {
-  max-height: 32px;
-  height: 32px;
+  max-height: 38px;
+  height: 38px;
 }
 
 :root:not([customizing]) .tabbrowser-tab:not([pinned="true"]) {

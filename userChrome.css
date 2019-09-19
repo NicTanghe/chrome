@@ -17,7 +17,7 @@
 :root:not([customizing]) .tabbrowser-tab:not([pinned="true"]) {
   --tab-min-width: fit-content;
   -moz-box-flex: 0 !important;
-  max-width: 70px;
+  max-width: 0;
 }
 
 :root:not([customizing]) .tabbrowser-tab:not([pinned="true"]) .tab-stack {

@@ -1,6 +1,11 @@
-# chrome
-Custom firefox UI (hide evrything except newtab url.)
 
+Blurr And Hide When Hovered.
+----
 
-This hides all th ui,
-For use with vimvixen or vimim
+currently fqcing bug bwere tabbar doesnt hide.
+
+can stil be used with firefox color or theming addons.
+
+For use with vimvixen or vimium
+
+Thought you wouldn't need a premium qcount for this version :5

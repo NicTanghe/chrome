@@ -1,55 +1,81 @@
-:root:not([customizing]) #navigator-toolbox {
-  background-color: #e2e2e2 !important;
+/* Source file https://github.com/MrOtherGuy/firefox-csshacks/tree/master/chrome/autohide_toolbox.css made available under Mozilla Public License v. 2.0
+See the above repository for updates as well as full license text. */
+
+/* Hide the whole toolbar area unless urlbar is focused or cursor is over the toolbar */
+/* Dimensions on non-Win10 OS probably needs to be adjusted */
+
+/* Compatibility options for hide_tabs_toolbar.css and tabs_on_bottom.css at the end of this file */
+
+:root{
+  --uc-autohide-toolbox-delay: 200ms; /* Wait 0.1s before hiding toolbars */
 }
 
-:root:not([customizing]) #navigator-toolbox #nav-bar {
-  min-height: 0 !important;
-  max-height: 0;
-  height: 0;
-  overflow: hidden;
+@media (-moz-os-version: windows-win10){
+
+  :root[tabsintitlebar][sizemode="maximized"]:not([inDOMFullscreen]) > body > box{ margin-top: 9px !important; }
+  :root[tabsintitlebar][sizemode="maximized"] #navigator-toolbox{ margin-top: -1px }
+
+  @media screen and (min-resolution: 1.25dppx){
+    :root[tabsintitlebar][sizemode="maximized"]:not([inDOMFullscreen]) > body > box{ margin-top: 8px !important; }
+  }
+  @media screen and (min-resolution: 1.5dppx){
+    :root[tabsintitlebar][sizemode="maximized"]:not([inDOMFullscreen]) > body > box{ margin-top: 8px !important; }
+  }
+  @media screen and (min-resolution: 2dppx){
+    :root[tabsintitlebar][sizemode="maximized"]:not([inDOMFullscreen]) > body > box{ margin-top: 7px !important; }
+  }
+  #navigator-toolbox:not(:-moz-lwtheme){ background-color: rgb(32, 35, 64) !important; }
 }
 
-:root:not([customizing]) #navigator-toolbox:focus-within #nav-bar {
-  max-height: 38px;
-  height: 38px;
+:root[sizemode="fullscreen"]{ margin-top: 0px !important; }
+
+#navigator-toolbox{
+  position: fixed !important;
+  display: block;
+  background-color: var(--lwt-accent-color,black) !important;
+  transition: transform 82ms linear, opacity 82ms linear !important;
+  transition-delay: var(--uc-autohide-toolbox-delay) !important;
+  transform-origin: top;
+  line-height: 0;
+  z-index: 1;
+  pointer-events: none;
 }
 
-:root:not([customizing]) .tabbrowser-tab:not([pinned="true"]) {
-  --tab-min-width: fit-content;
-  -moz-box-flex: 0 !important;
-  max-width: 0;
+#navigator-toolbox:-moz-any(:hover,:focus-within){ transition-delay: 33ms !important }
+
+#navigator-toolbox > *{ line-height: normal; pointer-events: auto }
+
+#navigator-toolbox,
+#navigator-toolbox > *{
+  width: 100vw;
+  -moz-appearance: none !important;
 }
 
-:root:not([customizing]) .tabbrowser-tab:not([pinned="true"]) .tab-stack {
-  flex-basis: 0;
+#navigator-toolbox:not(:focus-within):not(:hover){
+  transform: rotateX(86deg); /* This may need to be lower in osx - like 75 or so */
+  opacity: 0;
 }
 
-:root:not([customizing]) .tab-content {
-  padding: 0 0px;
+:root[sizemode="maximized"] #navigator-toolbox:not(:focus-within):not(:hover){ transform: rotateX(89deg) }
+
+/* Don't apply transform before window has been fully created */
+:root:not([sessionrestored]) #navigator-toolbox{ transform:none !important }
+
+:root[customizing] #navigator-toolbox{
+  position: relative !important;
+  transform: none !important;
+  opacity: 1 !important;
 }
 
-:root:not([customizing]) .tab-line,
-:root:not([customizing]) .tab-text,
-:root:not([customizing]) .tab-close-button {
-  display: none;
-}
+#navigator-toolbox[inFullscreen] > #PersonalToolbar,
+#PersonalToolbar[collapsed="true"]{ display: none }
 
-:root:not([customizing]) .tab-icon-image {
-  margin: 0 !important;
-}
+/* Uncomment this if tabs toolbar is hidden with hide_tabs_toolbar.css */
+ /*#titlebar{ margin-bottom: -9px }*/
 
-toolbarbutton#alltabs-button {
-  -moz-binding: url(data:text/plain;charset=utf-8;base64,PD94bWwgdmVyc2lvbj0iMS4wIj8+DQo8IS0tIENvcHlyaWdodCAoYykgMjAxNyBIYWdnYWkgTnVjaGkNCkF2YWlsYWJsZSBmb3IgdXNlIHVuZGVyIHRoZSBNSVQgTGljZW5zZToNCmh0dHBzOi8vb3BlbnNvdXJjZS5vcmcvbGljZW5zZXMvTUlUDQogLS0+DQoNCjwhLS0gUnVuIHVzZXJDaHJvbWUuanMvdXNlckNocm9tZS54dWwgYW5kIC51Yy5qcy8udWMueHVsLy5jc3MgZmlsZXMgIC0tPg0KPGJpbmRpbmdzIHhtbG5zPSJodHRwOi8vd3d3Lm1vemlsbGEub3JnL3hibCI+DQogICAgPGJpbmRpbmcgaWQ9ImpzIj4NCiAgICAgICAgPGltcGxlbWVudGF0aW9uPg0KICAgICAgICAgICAgPGNvbnN0cnVjdG9yPjwhW0NEQVRBWw0KICAgICAgICAgICAgICAgIGlmKHdpbmRvdy51c2VyQ2hyb21lSnNNb2QpIHJldHVybjsNCiAgICAgICAgICAgICAgICB3aW5kb3cudXNlckNocm9tZUpzTW9kID0gdHJ1ZTsNCg0KICAgICAgICAgICAgICAgIHZhciBjaHJvbWVGaWxlcyA9IEZpbGVVdGlscy5nZXREaXIoIlVDaHJtIiwgW10pLmRpcmVjdG9yeUVudHJpZXM7DQogICAgICAgICAgICAgICAgdmFyIHh1bEZpbGVzID0gW107DQogICAgICAgICAgICAgICAgdmFyIHNzcyA9IENjWydAbW96aWxsYS5vcmcvY29udGVudC9zdHlsZS1zaGVldC1zZXJ2aWNlOzEnXS5nZXRTZXJ2aWNlKENpLm5zSVN0eWxlU2hlZXRTZXJ2aWNlKTsNCg0KICAgICAgICAgICAgICAgIHdoaWxlKGNocm9tZUZpbGVzLmhhc01vcmVFbGVtZW50cygpKSB7DQogICAgICAgICAgICAgICAgICAgIHZhciBmaWxlID0gY2hyb21lRmlsZXMuZ2V0TmV4dCgpLlF1ZXJ5SW50ZXJmYWNlKENpLm5zSUZpbGUpOw0KICAgICAgICAgICAgICAgICAgICB2YXIgZmlsZVVSSSA9IFNlcnZpY2VzLmlvLm5ld0ZpbGVVUkkoZmlsZSk7DQoNCiAgICAgICAgICAgICAgICAgICAgaWYoZmlsZS5pc0ZpbGUoKSkgew0KICAgICAgICAgICAgICAgICAgICAgICAgdHlwZSA9ICJub25lIjsNCiAgICAgICAgICAgICAgICAgICAgICAgIGlmKC8oXnVzZXJDaHJvbWV8LnVjKS5qcyQvaS50ZXN0KGZpbGUubGVhZk5hbWUpKSB7DQogICAgICAgICAgICAgICAgICAgICAgICAgICAgdHlwZSA9ICJ1c2VyY2hyb21lL2pzIjsNCiAgICAgICAgICAgICAgICAgICAgICAgIH0NCiAgICAgICAgICAgICAgICAgICAgICAgIGVsc2UgaWYoLyhedXNlckNocm9tZXwudWMpLnh1bCQvaS50ZXN0KGZpbGUubGVhZk5hbWUpKSB7DQogICAgICAgICAgICAgICAgICAgICAgICAgICAgdHlwZSA9ICJ1c2VyY2hyb21lL3h1bCI7DQogICAgICAgICAgICAgICAgICAgICAgICB9DQogICAgICAgICAgICAgICAgICAgICAgICBlbHNlIGlmKC8uYXMuY3NzJC9pLnRlc3QoZmlsZS5sZWFmTmFtZSkpIHsNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICB0eXBlID0gImFnZW50c2hlZXQiOw0KICAgICAgICAgICAgICAgICAgICAgICAgfQ0KICAgICAgICAgICAgICAgICAgICAgICAgZWxzZSBpZigvXig/ISh1c2VyQ2hyb21lfHVzZXJDb250ZW50KS5jc3MkKS4rLmNzcyQvaS50ZXN0KGZpbGUubGVhZk5hbWUpKSB7DQogICAgICAgICAgICAgICAgICAgICAgICAgICAgdHlwZSA9ICJ1c2Vyc2hlZXQiOw0KICAgICAgICAgICAgICAgICAgICAgICAgfQ0KICAgICAgICAgICAgICAgICAgICAgICAgaWYodHlwZSAhPSAibm9uZSIpIHsNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb25zb2xlLmxvZygiLS0tLS0tLS0tLVwgIiArIGZpbGUubGVhZk5hbWUgKyAiICgiICsgdHlwZSArICIpIik7DQogICAgICAgICAgICAgICAgICAgICAgICAgICAgdHJ5IHsNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaWYodHlwZSA9PSAidXNlcmNocm9tZS9qcyIpIHsNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFNlcnZpY2VzLnNjcmlwdGxvYWRlci5sb2FkU3ViU2NyaXB0V2l0aE9wdGlvbnMoZmlsZVVSSS5zcGVjLCB7dGFyZ2V0OiB3aW5kb3csIGlnbm9yZUNhY2hlOiB0cnVlfSk7DQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIH0NCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZWxzZSBpZih0eXBlID09ICJ1c2VyY2hyb21lL3h1bCIpIHsNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHh1bEZpbGVzLnB1c2goZmlsZVVSSS5zcGVjKTsNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfQ0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBlbHNlIGlmKHR5cGUgPT0gImFnZW50c2hlZXQiKSB7DQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBpZighc3NzLnNoZWV0UmVnaXN0ZXJlZChmaWxlVVJJLCBzc3MuQUdFTlRfU0hFRVQpKQ0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHNzcy5sb2FkQW5kUmVnaXN0ZXJTaGVldChmaWxlVVJJLCBzc3MuQUdFTlRfU0hFRVQpOw0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB9DQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGVsc2UgaWYodHlwZSA9PSAidXNlcnNoZWV0Iikgew0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaWYoIXNzcy5zaGVldFJlZ2lzdGVyZWQoZmlsZVVSSSwgc3NzLlVTRVJfU0hFRVQpKQ0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHNzcy5sb2FkQW5kUmVnaXN0ZXJTaGVldChmaWxlVVJJLCBzc3MuVVNFUl9TSEVFVCk7DQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIH0NCiAgICAgICAgICAgICAgICAgICAgICAgICAgICB9IGNhdGNoKGUpIHsNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgY29uc29sZS5sb2coIiMjIyMjIyMjIyMgRVJST1I6ICIgKyBlICsgIiBhdCAiICsgZS5saW5lTnVtYmVyICsgIjoiICsgZS5jb2x1bW5OdW1iZXIpOw0KICAgICAgICAgICAgICAgICAgICAgICAgICAgIH0NCiAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb25zb2xlLmxvZygiLS0tLS0tLS0tLS8gIiArIGZpbGUubGVhZk5hbWUpOw0KICAgICAgICAgICAgICAgICAgICAgICAgfQ0KICAgICAgICAgICAgICAgICAgICB9DQogICAgICAgICAgICAgICAgfQ0KDQogICAgICAgICAgICAgICAgc2V0VGltZW91dChmdW5jdGlvbiBsb2FkWFVMKCkgew0KICAgICAgICAgICAgICAgICAgICBpZih4dWxGaWxlcy5sZW5ndGggPiAwKSB7DQogICAgICAgICAgICAgICAgICAgICAgICBkb2N1bWVudC5sb2FkT3ZlcmxheSh4dWxGaWxlcy5zaGlmdCgpLCBudWxsKTsNCiAgICAgICAgICAgICAgICAgICAgICAgIHNldFRpbWVvdXQobG9hZFhVTCwgNSk7DQogICAgICAgICAgICAgICAgICAgIH0NCiAgICAgICAgICAgICAgICB9LCAwKTsNCiAgICAgICAgICAgIF1dPjwvY29uc3RydWN0b3I+DQogICAgICAgIDwvaW1wbGVtZW50YXRpb24+DQogICAgPC9iaW5kaW5nPg0KPC9iaW5kaW5ncz4=);
-}
-/* hides the native tabs */
-#TabsToolbar {
-  visibility: collapse;
-}
-
-#titlebar {
-  visibility: collapse;
-}
-
-#sidebar-header {
-  visibility: collapse !important;
-}
+/* Uncomment the following for compatibility with tabs_on_bottom.css - this isn't well tested though */
+/*
+:root{ --uc-titlebar-padding: 0px !important; }
+#navigator-toolbox{ flex-direction: column; display: flex; }
+#titlebar{ order: 2 }
+*/

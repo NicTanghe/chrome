@@ -1,22 +1,29 @@
 /* Modified from https://github.com/christorange/VerticalFox/blob/main/windows/userChrome.css */
 /* Fix urlbar height issue after v133 */
-@media -moz-pref("uc.flex.increase-navbar-height") {
-    #urlbar-container {
-        padding-top: 5.5px !important;
-    }
-}
+@media not (-moz-pref("uc.flex.disable-urlbar-autohide")) {
 
-#urlbar[breakout][breakout-extend] {
-    margin-left: 0 !important;
-    width: var(--urlbar-width) !important;
-}
+  /* Hide when not hovered */
+  #navigator-toolbox:not(:hover) > #titlebar,
+  #navigator-toolbox:not(:hover) > #nav-bar,
+  #navigator-toolbox:not(:hover) > #TabsToolbar {
+    margin-top: -42px !important; /* match actual height */
+    opacity: 0;
+    pointer-events: none;
+  }
 
-#urlbar[breakout][breakout-extend],
-#urlbar[breakout][breakout-extend-disabled][open] {
-    height: auto !important;
-    top: auto !important;
-}
+  /* Keep a hover zone so bars can come back */
+  #navigator-toolbox {
+    padding-top: 42px !important; /* equal to margin-top */
+    margin-top: -32px !important;
+  }
 
+  /* Smooth transitions */
+  #titlebar,
+  #nav-bar,
+  #TabsToolbar {
+    transition: margin-top 0.25s ease, opacity 0.25s ease !important;
+  }
+}
 /* --- Auto-hide URL bar (slide-up, parent-hover) --- */
 /* Toggle with this pref: about:config → uc.flex.disable-urlbar-autohide = false */
 /* Only apply if autohide is NOT disabled */
@@ -36,7 +43,7 @@
   /* Keep a hover zone so toolbars can slide back */
   #navigator-toolbox {
     padding-top: 42px;   /* same as margin-top above */
-    margin-top: -41px;
+    margin-top: -38px;
   }
 
   /* Smooth transitions */
